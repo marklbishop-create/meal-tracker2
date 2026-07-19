@@ -24,6 +24,8 @@ export const metadata: Metadata = {
 
 import { Analytics } from "@vercel/analytics/next";
 
+import { Toaster } from "react-hot-toast";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,10 +34,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head />
-      <body className={`${plusJakartaSans.variable} antialiased`}>
+      <body className={`${inter.variable} antialiased`}>
         <AuthProvider>
           {children}
         </AuthProvider>
+        <Toaster position="bottom-center" toastOptions={{ style: { background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)' } }} />
         <Analytics />
       </body>
     </html>

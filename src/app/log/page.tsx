@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function LogMeal() {
   const { user, profile } = useAuth();
@@ -39,7 +40,7 @@ export default function LogMeal() {
 
   const handleAnalyze = async () => {
     if (!photoPreview && !description) {
-      alert("Please provide a photo or a description first.");
+      toast.error("Please provide a photo or a description first.");
       return;
     }
 
@@ -61,11 +62,10 @@ export default function LogMeal() {
         setFat(data.fat?.toString() || "");
         setFiber(data.fiber?.toString() || "");
       } else {
-        alert(data.error || "Could not analyze. You can still enter manually.");
+        toast.error(data.error || "Could not analyze. You can still enter manually.");
       }
-    } catch (error) {
-      console.error("AI Error:", error);
-      alert("Something went wrong analyzing your meal.");
+    } catch (e) {
+      toast.error("Something went wrong analyzing your meal.");
     } finally {
       setLoading(false);
     }
@@ -90,10 +90,11 @@ export default function LogMeal() {
         createdAt: serverTimestamp()
       });
       
-      router.push('/');
-    } catch (error) {
-      console.error("Error saving meal:", error);
-      alert("Failed to save meal.");
+      toast.success("Meal logged successfully!");
+      router.push('/history');
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to save meal.");
     } finally {
       setLoading(false);
     }

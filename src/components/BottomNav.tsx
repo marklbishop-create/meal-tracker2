@@ -6,6 +6,7 @@ import { Home, PlusCircle, LineChart, Scale } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import toast from "react-hot-toast";
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -24,8 +25,9 @@ export default function BottomNav() {
       });
       setShowWeightModal(false);
       setWeightInput("");
+      toast.success("Weight logged successfully!");
     } catch (e) {
-      alert("Failed to save weight.");
+      toast.error("Failed to save weight.");
     }
   };
 

@@ -8,6 +8,7 @@ import { db } from "@/lib/firebase";
 import { format, subDays, subMonths, subYears, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, getDay } from "date-fns";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, ReferenceLine, Legend } from 'recharts';
 import { Sparkles, Calendar as CalendarIcon, TrendingUp, Trash2, Scale, Plus, Activity } from "lucide-react";
+import toast from "react-hot-toast";
 
 type TimeRange = '1w' | '1m' | '6m' | '1y';
 
@@ -140,7 +141,7 @@ export default function History() {
       });
       setShowWeightModal(false);
     } catch (e) {
-      alert("Failed to save weight.");
+      toast.error("Failed to save weight.");
     }
   };
 
@@ -168,15 +169,16 @@ export default function History() {
         })
       });
       
-      if (res.ok) {
-        const data = await res.json();
-        setAiReview(data.review);
-      } else {
-        alert("Failed to generate review.");
+      if (!res.ok) {
+        toast.error("Failed to generate review.");
+        return;
       }
-    } catch (e) {
-      console.error(e);
-      alert("Error contacting AI.");
+      
+      const data = await res.json();
+      setAiReview(data.review);
+    } catch (err) {
+      console.error(err);
+      toast.error("Error contacting AI.");
     } finally {
       setLoadingAi(false);
     }

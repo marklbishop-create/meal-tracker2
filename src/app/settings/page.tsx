@@ -7,6 +7,7 @@ import { db } from "@/lib/firebase";
 import BottomNav from "@/components/BottomNav";
 import { Check, ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function Settings() {
   const { user, profile } = useAuth();
@@ -58,11 +59,11 @@ export default function Settings() {
         presets: presets,
       });
       
-      alert("Settings saved successfully!");
+      toast.success("Settings updated!");
       router.push('/');
     } catch (error) {
       console.error("Error saving settings", error);
-      alert("Failed to save settings. Please try again.");
+      toast.error("Failed to save settings. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -154,7 +155,7 @@ export default function Settings() {
                   <input type="number" className="input-field" placeholder="Fat (g)" value={newPreset.fat} onChange={e => setNewPreset({...newPreset, fat: e.target.value})} />
                 </div>
                 <button type="button" className="btn-secondary" style={{ width: '100%', justifyContent: 'center' }} onClick={() => {
-                  if (!newPreset.name || !newPreset.calories) return alert("Name and Calories required.");
+                  if (!newPreset.name || !newPreset.calories) return toast.error("Name and Calories required.");
                   setPresets([...presets, { 
                     id: Date.now().toString(), 
                     name: newPreset.name, 

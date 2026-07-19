@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/lib/AuthContext";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import toast from "react-hot-toast";
 import { ChevronRight, Check } from "lucide-react";
 
 export default function Onboarding() {
@@ -93,8 +94,8 @@ export default function Onboarding() {
       });
       
     } catch (error) {
-      console.error("Error saving onboarding data", error);
-      alert("Failed to save data. Please try again.");
+      console.error(error);
+      toast.error("Failed to save data. Please try again.");
     } finally {
       setLoading(false);
     }
