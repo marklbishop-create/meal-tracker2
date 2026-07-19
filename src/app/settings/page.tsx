@@ -76,10 +76,7 @@ export default function Settings() {
     <>
       <div className="container page-enter" style={{ paddingTop: '2rem', paddingBottom: '100px' }}>
         
-        <header style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
-          <button onClick={() => router.back()} className="btn-secondary" style={{ padding: '8px', borderRadius: '50%' }}>
-            <ArrowLeft size={20} />
-          </button>
+        <header style={{ marginBottom: '2rem' }}>
           <h2 className="text-gradient" style={{ fontSize: '1.8rem' }}>Settings & Goals</h2>
         </header>
         

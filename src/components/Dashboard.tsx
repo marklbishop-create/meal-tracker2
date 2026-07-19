@@ -130,10 +130,6 @@ export default function Dashboard() {
             ) : (
                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
             )}
-            
-            <button onClick={() => router.push('/settings')} className="btn-secondary" style={{ padding: '8px', borderRadius: '50%' }} aria-label="Settings">
-              <Settings size={20} />
-            </button>
           </div>
         </header>
 

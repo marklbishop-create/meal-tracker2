@@ -15,8 +15,10 @@ export default function LogMeal() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<'meal' | 'weight'>('meal');
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [description, setDescription] = useState("");
+  const [weightInput, setWeightInput] = useState("");
 
   // Form State
   const [name, setName] = useState("");
@@ -100,12 +102,49 @@ export default function LogMeal() {
     }
   };
 
+  const handleLogWeight = async () => {
+    if (!user || !weightInput) return;
+    setLoading(true);
+    try {
+      await addDoc(collection(db, "users", user.uid, "weights"), {
+        weight: parseFloat(weightInput),
+        createdAt: serverTimestamp()
+      });
+      toast.success("Weight logged successfully!");
+      router.push('/history');
+    } catch (e) {
+      toast.error("Failed to save weight.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="container page-enter" style={{ paddingTop: '2rem', paddingBottom: '100px' }}>
-        <h2 className="text-gradient" style={{ fontSize: '1.8rem', marginBottom: '1.5rem' }}>Log a Meal</h2>
         
-        <div className="glass-panel" style={{ padding: '2rem', maxWidth: '600px', margin: '0 auto' }}>
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', background: 'rgba(0,0,0,0.2)', padding: '6px', borderRadius: 'var(--radius-md)' }}>
+          <button 
+            className={activeTab === 'meal' ? 'btn-primary' : 'btn-secondary'} 
+            style={{ flex: 1, padding: '10px', justifyContent: 'center' }}
+            onClick={() => setActiveTab('meal')}
+          >
+            Log Meal
+          </button>
+          <button 
+            className={activeTab === 'weight' ? 'btn-primary' : 'btn-secondary'} 
+            style={{ flex: 1, padding: '10px', justifyContent: 'center' }}
+            onClick={() => {
+              setActiveTab('weight');
+              if (!weightInput) setWeightInput(profile?.weight?.toString() || "");
+            }}
+          >
+            Log Weight
+          </button>
+        </div>
+
+        {activeTab === 'meal' ? (
+          <div className="glass-panel" style={{ padding: '2rem', maxWidth: '600px', margin: '0 auto' }}>
           
           {/* Input Section */}
           <div style={{ marginBottom: '2rem' }}>
@@ -231,6 +270,34 @@ export default function LogMeal() {
           </form>
           
         </div>
+        ) : (
+          <div className="glass-panel" style={{ padding: '2rem', maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
+            <h3 style={{ marginBottom: '1.5rem', fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Enter Today's Weight</h3>
+            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', justifyContent: 'center', alignItems: 'center' }}>
+              <input
+                type="number"
+                step="0.1"
+                className="input-field"
+                placeholder="Weight"
+                value={weightInput}
+                onChange={(e) => setWeightInput(e.target.value)}
+                style={{ width: '150px', textAlign: 'center', fontSize: '1.5rem', padding: '1rem' }}
+                autoFocus
+              />
+              <span style={{ fontSize: '1.2rem', color: 'var(--text-muted)' }}>lbs</span>
+            </div>
+            
+            <button type="button" onClick={handleLogWeight} disabled={loading || !weightInput} className="btn-primary" style={{ width: '100%', padding: '14px', fontSize: '1.1rem', justifyContent: 'center' }}>
+              {loading ? "Saving..." : (
+                <>
+                  Save Weight
+                  <Check size={20} />
+                </>
+              )}
+            </button>
+          </div>
+        )}
+
       </div>
       <BottomNav />
     </>

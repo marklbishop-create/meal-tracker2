@@ -2,40 +2,16 @@
 
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Home, PlusCircle, LineChart, Scale } from "lucide-react";
-import { useAuth } from "@/lib/AuthContext";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
-import toast from "react-hot-toast";
+import { Home, PlusCircle, LineChart, Settings } from "lucide-react";
 
 export default function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, profile } = useAuth();
-
-  const [showWeightModal, setShowWeightModal] = useState(false);
-  const [weightInput, setWeightInput] = useState("");
-
-  const handleLogWeight = async () => {
-    if (!user || !weightInput) return;
-    try {
-      await addDoc(collection(db, "users", user.uid, "weights"), {
-        weight: parseFloat(weightInput),
-        createdAt: serverTimestamp()
-      });
-      setShowWeightModal(false);
-      setWeightInput("");
-      toast.success("Weight logged successfully!");
-    } catch (e) {
-      toast.error("Failed to save weight.");
-    }
-  };
-
   const navItems = [
     { label: "Dashboard", path: "/", icon: Home },
-    { label: "Log Meal", path: "/log", icon: PlusCircle },
-    { label: "Log Weight", action: () => { setWeightInput(profile?.weight?.toString() || ""); setShowWeightModal(true); }, icon: Scale },
+    { label: "Log", path: "/log", icon: PlusCircle },
     { label: "History", path: "/history", icon: LineChart },
+    { label: "Settings", path: "/settings", icon: Settings },
   ];
 
   return (
@@ -83,28 +59,6 @@ export default function BottomNav() {
           );
         })}
       </nav>
-
-      {/* Global Weight Modal */}
-      {showWeightModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div className="glass-panel" style={{ padding: '2rem', width: '90%', maxWidth: '400px' }}>
-            <h3 style={{ marginBottom: '1rem' }}>Log Weight</h3>
-            <input 
-              type="number" 
-              step="0.1"
-              value={weightInput}
-              onChange={e => setWeightInput(e.target.value)}
-              className="input-field" 
-              placeholder="Enter weight in lbs"
-              style={{ marginBottom: '1.5rem' }}
-            />
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <button onClick={() => setShowWeightModal(false)} className="btn-secondary" style={{ flex: 1, padding: '12px' }}>Cancel</button>
-              <button onClick={handleLogWeight} className="btn-primary" style={{ flex: 1, padding: '12px' }}>Save</button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
