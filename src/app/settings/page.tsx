@@ -5,9 +5,11 @@ import { useAuth } from "@/lib/AuthContext";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import BottomNav from "@/components/BottomNav";
-import { Check, ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { Check, ArrowLeft, Plus, Trash2, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 export default function Settings() {
   const { user, profile } = useAuth();
@@ -183,6 +185,19 @@ export default function Settings() {
                   <Check size={20} />
                 </>
               )}
+            </button>
+            
+            <button 
+              type="button" 
+              onClick={async () => {
+                await signOut(auth);
+                router.push('/');
+              }} 
+              className="btn-secondary" 
+              style={{ marginTop: '1rem', padding: '14px', fontSize: '1.1rem', width: '100%', justifyContent: 'center', color: 'var(--accent-danger)' }}
+            >
+              Sign Out
+              <LogOut size={20} />
             </button>
 
           </form>

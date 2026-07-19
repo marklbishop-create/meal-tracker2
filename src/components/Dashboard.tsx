@@ -113,10 +113,10 @@ export default function Dashboard() {
         {/* Header */}
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.5rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <h2 style={{ fontSize: '1.5rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
               Welcome, <span className="text-gradient">{profile?.name?.split(' ')[0] || 'User'}</span>
               {streak > 0 && (
-                <span style={{ fontSize: '1rem', background: 'rgba(255, 100, 0, 0.1)', color: '#FF6B00', padding: '4px 10px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <span style={{ fontSize: '0.9rem', background: 'rgba(255, 100, 0, 0.1)', color: '#FF6B00', padding: '4px 10px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                   🔥 {streak} {streak === 1 ? 'Day' : 'Days'}
                 </span>
               )}
@@ -133,11 +133,6 @@ export default function Dashboard() {
             
             <button onClick={() => router.push('/settings')} className="btn-secondary" style={{ padding: '8px', borderRadius: '50%' }} aria-label="Settings">
               <Settings size={20} />
-            </button>
-            
-            <button onClick={logout} className="btn-secondary" style={{ padding: '8px 12px', fontSize: '0.9rem' }}>
-              <LogOut size={16} />
-              <span className="hidden-mobile">Sign Out</span>
             </button>
           </div>
         </header>
