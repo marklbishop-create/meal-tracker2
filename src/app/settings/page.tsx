@@ -24,7 +24,7 @@ export default function Settings() {
   const [theme, setTheme] = useState<string>("dark");
 
   const [presets, setPresets] = useState<any[]>([]);
-  const [newPreset, setNewPreset] = useState({ name: "", calories: "", protein: "", carbs: "", fat: "", fiber: "" });
+  const [newPreset, setNewPreset] = useState({ name: "", description: "", calories: "", protein: "", carbs: "", fat: "", fiber: "" });
 
   useEffect(() => {
     if (profile) {
@@ -148,6 +148,7 @@ export default function Settings() {
               <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px dashed var(--border-color)' }}>
                 <h4 style={{ marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Create New Preset</h4>
                 <input type="text" className="input-field" placeholder="Meal Name (e.g. Oatmeal)" value={newPreset.name} onChange={e => setNewPreset({...newPreset, name: e.target.value})} style={{ marginBottom: '0.5rem' }} />
+                <input type="text" className="input-field" placeholder="Description (Optional)" value={newPreset.description} onChange={e => setNewPreset({...newPreset, description: e.target.value})} style={{ marginBottom: '0.5rem' }} />
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
                   <input type="number" className="input-field" placeholder="Calories" value={newPreset.calories} onChange={e => setNewPreset({...newPreset, calories: e.target.value})} />
                   <input type="number" className="input-field" placeholder="Protein (g)" value={newPreset.protein} onChange={e => setNewPreset({...newPreset, protein: e.target.value})} />
@@ -159,13 +160,14 @@ export default function Settings() {
                   setPresets([...presets, { 
                     id: Date.now().toString(), 
                     name: newPreset.name, 
+                    description: newPreset.description,
                     calories: parseInt(newPreset.calories) || 0, 
                     protein: parseInt(newPreset.protein) || 0, 
                     carbs: parseInt(newPreset.carbs) || 0, 
                     fat: parseInt(newPreset.fat) || 0, 
                     fiber: parseInt(newPreset.fiber) || 0 
                   }]);
-                  setNewPreset({ name: "", calories: "", protein: "", carbs: "", fat: "", fiber: "" });
+                  setNewPreset({ name: "", description: "", calories: "", protein: "", carbs: "", fat: "", fiber: "" });
                 }}>
                   <Plus size={18} /> Add Preset
                 </button>

@@ -117,6 +117,7 @@ export default function LogMeal() {
                   const p = profile.presets?.find(x => x.id === e.target.value);
                   if (p) {
                     setName(p.name);
+                    setDescription(p.description || "");
                     setCalories(p.calories.toString());
                     setProtein(p.protein.toString());
                     setCarbs(p.carbs.toString());

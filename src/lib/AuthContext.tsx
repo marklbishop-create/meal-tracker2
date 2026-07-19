@@ -25,6 +25,7 @@ export interface UserProfile {
   presets?: {
     id: string;
     name: string;
+    description?: string;
     calories: number;
     protein: number;
     carbs: number;
