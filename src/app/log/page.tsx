@@ -144,7 +144,7 @@ export default function LogMeal() {
     <>
       <div className="container page-enter" style={{ paddingTop: '2rem', paddingBottom: '100px' }}>
         
-        <header style={{ marginBottom: '2rem', textAlign: 'center' }}>
+        <header style={{ marginBottom: '2rem' }}>
           <h2 className="text-gradient" style={{ fontSize: '1.8rem' }}>Record Entry</h2>
         </header>
 
