@@ -144,6 +144,10 @@ export default function LogMeal() {
     <>
       <div className="container page-enter" style={{ paddingTop: '2rem', paddingBottom: '100px' }}>
         
+        <header style={{ marginBottom: '2rem', textAlign: 'center' }}>
+          <h2 className="text-gradient" style={{ fontSize: '1.8rem' }}>Record Entry</h2>
+        </header>
+
         <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', background: 'rgba(0,0,0,0.2)', padding: '6px', borderRadius: 'var(--radius-md)' }}>
           <button 
             className={activeTab === 'meal' ? 'btn-primary' : 'btn-secondary'} 

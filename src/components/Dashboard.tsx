@@ -214,17 +214,17 @@ export default function Dashboard() {
              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
                <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: 'var(--radius-sm)', textAlign: 'center' }}>
                  <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginBottom: '0.25rem' }}>Carbs</p>
-                 <h3 style={{ fontSize: '1.25rem', color: '#ffb703' }}>{carbsConsumed}g</h3>
+                 <h3 style={{ fontSize: '1.25rem', color: 'var(--color-carbs)' }}>{carbsConsumed}g</h3>
                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.7rem' }}>of {carbsTarget}g</p>
                </div>
                <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: 'var(--radius-sm)', textAlign: 'center' }}>
                  <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginBottom: '0.25rem' }}>Fat</p>
-                 <h3 style={{ fontSize: '1.25rem', color: '#fb8500' }}>{fatConsumed}g</h3>
+                 <h3 style={{ fontSize: '1.25rem', color: 'var(--color-fat)' }}>{fatConsumed}g</h3>
                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.7rem' }}>of {fatTarget}g</p>
                </div>
                <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: 'var(--radius-sm)', textAlign: 'center' }}>
                  <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginBottom: '0.25rem' }}>Fiber</p>
-                 <h3 style={{ fontSize: '1.25rem', color: '#8ecae6' }}>{fiberConsumed}g</h3>
+                 <h3 style={{ fontSize: '1.25rem', color: 'var(--color-fiber)' }}>{fiberConsumed}g</h3>
                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.7rem' }}>of {fiberTarget}g</p>
                </div>
              </div>

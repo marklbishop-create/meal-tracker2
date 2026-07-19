@@ -38,6 +38,12 @@
   --font-display: var(--font-inter, sans-serif);
   --font-body: var(--font-inter, sans-serif);
 
+  /* Component Colors */
+  --btn-text-color: #000;
+  --color-carbs: #ffb703;
+  --color-fat: #fb8500;
+  --color-fiber: #8ecae6;
+
   /* Animations */
   --transition-fast: 0.15s ease-out;
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -60,6 +66,10 @@
   
   --grad-primary: linear-gradient(135deg, #0277BD 0%, #009688 100%);
   --grad-secondary: linear-gradient(135deg, #6A1B9A 0%, #8E24AA 100%);
+  
+  --btn-text-color: #FFF;
+  --color-carbs: #d97706;
+  --color-fiber: #0284c7;
 }
 
 [data-theme="earthy"] {
@@ -78,6 +88,10 @@
 
   --grad-primary: linear-gradient(135deg, #B25A24 0%, #4A5626 100%);
   --grad-secondary: linear-gradient(135deg, #5D4037 0%, #795548 100%);
+
+  --btn-text-color: #FFF;
+  --color-carbs: #b45309;
+  --color-fiber: #0369a1;
 }
 
 html {
@@ -151,7 +165,7 @@ input, textarea {
 
 .btn-primary {
   background: var(--grad-primary);
-  color: #000;
+  color: var(--btn-text-color);
   font-weight: 600;
   padding: 12px 24px;
   border-radius: var(--radius-full);
