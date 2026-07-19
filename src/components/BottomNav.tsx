@@ -36,7 +36,7 @@ export default function BottomNav() {
           return (
             <button
               key={item.label}
-              onClick={item.path ? () => router.push(item.path) : item.action}
+              onClick={() => router.push(item.path)}
               style={{
                 display: 'flex',
                 flexDirection: 'column',

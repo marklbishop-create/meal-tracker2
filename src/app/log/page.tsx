@@ -336,8 +336,8 @@ export default function LogMeal() {
                         contentStyle={{ background: 'var(--bg-secondary)', border: 'none', borderRadius: '8px', color: 'var(--text-primary)' }}
                         itemStyle={{ color: 'var(--accent-primary)' }}
                       />
-                      {profile?.goals?.weight && (
-                        <ReferenceLine y={profile.goals.weight} stroke="var(--accent-secondary)" strokeDasharray="3 3" label={{ position: 'top', value: 'Goal', fill: 'var(--text-muted)', fontSize: 12 }} />
+                      {profile?.goals?.targetWeight && (
+                        <ReferenceLine y={profile.goals.targetWeight} stroke="var(--accent-secondary)" strokeDasharray="3 3" label={{ position: 'top', value: 'Target', fill: 'var(--text-muted)' }} />
                       )}
                       <Line type="monotone" dataKey="weight" stroke="var(--accent-primary)" strokeWidth={3} dot={{ r: 4, fill: 'var(--bg-primary)', strokeWidth: 2 }} activeDot={{ r: 6 }} />
                     </LineChart>
