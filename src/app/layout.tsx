@@ -23,7 +23,6 @@ export const metadata: Metadata = {
 };
 
 import { Analytics } from "@vercel/analytics/next";
-
 import { Toaster } from "react-hot-toast";
 
 export default function RootLayout({
@@ -32,9 +31,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <head />
-      <body className={`${inter.variable} antialiased`}>
+      <body className="antialiased">
         <AuthProvider>
           {children}
         </AuthProvider>
