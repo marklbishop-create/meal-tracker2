@@ -9,7 +9,7 @@ import { db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 
 export default function LogMeal() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -108,6 +108,28 @@ export default function LogMeal() {
           
           {/* Input Section */}
           <div style={{ marginBottom: '2rem' }}>
+            
+            {profile?.presets && profile.presets.length > 0 && (
+              <div style={{ marginBottom: '1.5rem', padding: '1rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Use a Preset Meal</label>
+                <select className="input-field" onChange={(e) => {
+                  const p = profile.presets?.find(x => x.id === e.target.value);
+                  if (p) {
+                    setName(p.name);
+                    setCalories(p.calories.toString());
+                    setProtein(p.protein.toString());
+                    setCarbs(p.carbs.toString());
+                    setFat(p.fat.toString());
+                    setFiber(p.fiber.toString());
+                  }
+                }}>
+                  <option value="">Select a preset...</option>
+                  {profile.presets.map(p => (
+                    <option key={p.id} value={p.id}>{p.name} ({p.calories}kcal)</option>
+                  ))}
+                </select>
+              </div>
+            )}
             
             <textarea 
                className="input-field" 

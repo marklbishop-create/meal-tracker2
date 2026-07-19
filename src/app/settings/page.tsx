@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import BottomNav from "@/components/BottomNav";
-import { Check, ArrowLeft } from "lucide-react";
+import { Check, ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function Settings() {
@@ -22,6 +22,9 @@ export default function Settings() {
   const [fat, setFat] = useState<string>("");
   const [theme, setTheme] = useState<string>("dark");
 
+  const [presets, setPresets] = useState<any[]>([]);
+  const [newPreset, setNewPreset] = useState({ name: "", calories: "", protein: "", carbs: "", fat: "", fiber: "" });
+
   useEffect(() => {
     if (profile) {
       setWeight(profile.weight?.toString() || "");
@@ -31,6 +34,7 @@ export default function Settings() {
       setCarbs(profile.goals?.carbs?.toString() || "");
       setFat(profile.goals?.fat?.toString() || "");
       setTheme(profile.theme || "dark");
+      setPresets(profile.presets || []);
     }
   }, [profile]);
 
@@ -49,8 +53,9 @@ export default function Settings() {
         "goals.calories": parseInt(calories),
         "goals.protein": parseInt(protein),
         "goals.carbs": parseInt(carbs),
-        "goals.fat": parseInt(fat),
+        "goals.fat": parseInt(fat) || 0,
         theme: theme,
+        presets: presets,
       });
       
       alert("Settings saved successfully!");
@@ -123,6 +128,47 @@ export default function Settings() {
                 <option value="light">Crisp Horizon</option>
                 <option value="earthy">Terrane</option>
               </select>
+            </div>
+
+            <h3 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '1rem', marginTop: '1.5rem' }}>Preset Meals</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1rem' }}>
+              {presets.map((p, i) => (
+                <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'var(--bg-secondary)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
+                  <div>
+                    <div style={{ fontWeight: 600 }}>{p.name}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{p.calories}kcal • {p.protein}g P • {p.carbs}g C • {p.fat}g F</div>
+                  </div>
+                  <button type="button" onClick={() => setPresets(presets.filter((_, idx) => idx !== i))} style={{ color: 'var(--accent-danger)', background: 'transparent', border: 'none', cursor: 'pointer' }}>
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              ))}
+
+              <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px dashed var(--border-color)' }}>
+                <h4 style={{ marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Create New Preset</h4>
+                <input type="text" className="input-field" placeholder="Meal Name (e.g. Oatmeal)" value={newPreset.name} onChange={e => setNewPreset({...newPreset, name: e.target.value})} style={{ marginBottom: '0.5rem' }} />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                  <input type="number" className="input-field" placeholder="Calories" value={newPreset.calories} onChange={e => setNewPreset({...newPreset, calories: e.target.value})} />
+                  <input type="number" className="input-field" placeholder="Protein (g)" value={newPreset.protein} onChange={e => setNewPreset({...newPreset, protein: e.target.value})} />
+                  <input type="number" className="input-field" placeholder="Carbs (g)" value={newPreset.carbs} onChange={e => setNewPreset({...newPreset, carbs: e.target.value})} />
+                  <input type="number" className="input-field" placeholder="Fat (g)" value={newPreset.fat} onChange={e => setNewPreset({...newPreset, fat: e.target.value})} />
+                </div>
+                <button type="button" className="btn-secondary" style={{ width: '100%', justifyContent: 'center' }} onClick={() => {
+                  if (!newPreset.name || !newPreset.calories) return alert("Name and Calories required.");
+                  setPresets([...presets, { 
+                    id: Date.now().toString(), 
+                    name: newPreset.name, 
+                    calories: parseInt(newPreset.calories) || 0, 
+                    protein: parseInt(newPreset.protein) || 0, 
+                    carbs: parseInt(newPreset.carbs) || 0, 
+                    fat: parseInt(newPreset.fat) || 0, 
+                    fiber: parseInt(newPreset.fiber) || 0 
+                  }]);
+                  setNewPreset({ name: "", calories: "", protein: "", carbs: "", fat: "", fiber: "" });
+                }}>
+                  <Plus size={18} /> Add Preset
+                </button>
+              </div>
             </div>
 
             <button type="submit" disabled={loading} className="btn-primary" style={{ marginTop: '1.5rem', padding: '14px', fontSize: '1.1rem', width: '100%', justifyContent: 'center' }}>

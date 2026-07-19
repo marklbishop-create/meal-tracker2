@@ -22,6 +22,15 @@ export interface UserProfile {
     fiber: number; // in grams
     targetWeight?: number;
   },
+  presets?: {
+    id: string;
+    name: string;
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    fiber: number;
+  }[];
   theme?: 'dark' | 'light' | 'earthy';
 }
 
