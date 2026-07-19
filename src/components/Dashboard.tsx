@@ -113,7 +113,7 @@ export default function Dashboard() {
         {/* Header */}
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.8rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <h2 style={{ fontSize: '1.5rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
               Welcome, <span className="text-gradient">{profile?.name?.split(' ')[0] || 'User'}</span>
               {streak > 0 && (
                 <span style={{ fontSize: '1rem', background: 'rgba(255, 100, 0, 0.1)', color: '#FF6B00', padding: '4px 10px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -157,33 +157,33 @@ export default function Dashboard() {
              
              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1.5rem', borderRadius: 'var(--radius-sm)', textAlign: 'center' }}>
-                 <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Calories Remaining</p>
-                 <h2 style={{ fontSize: '2.5rem', color: 'var(--accent-primary)' }}>{caloriesTarget - calsConsumed}</h2>
-                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>of {caloriesTarget} kcal</p>
+                 <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.5rem' }}>Calories Remaining</p>
+                 <h2 style={{ fontSize: '2.0rem', color: 'var(--accent-primary)' }}>{caloriesTarget - calsConsumed}</h2>
+                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>of {caloriesTarget} kcal</p>
                </div>
                
                <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1.5rem', borderRadius: 'var(--radius-sm)', textAlign: 'center' }}>
-                 <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Protein</p>
-                 <h2 style={{ fontSize: '2.5rem', color: 'var(--accent-secondary)' }}>{proteinConsumed}g</h2>
-                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>of {proteinTarget}g</p>
+                 <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.5rem' }}>Protein</p>
+                 <h2 style={{ fontSize: '2.0rem', color: 'var(--accent-secondary)' }}>{proteinConsumed}g</h2>
+                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>of {proteinTarget}g</p>
                </div>
              </div>
 
              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
                <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: 'var(--radius-sm)', textAlign: 'center' }}>
-                 <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '0.25rem' }}>Carbs</p>
-                 <h3 style={{ fontSize: '1.5rem', color: '#ffb703' }}>{carbsConsumed}g</h3>
-                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>of {carbsTarget}g</p>
+                 <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginBottom: '0.25rem' }}>Carbs</p>
+                 <h3 style={{ fontSize: '1.25rem', color: '#ffb703' }}>{carbsConsumed}g</h3>
+                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.7rem' }}>of {carbsTarget}g</p>
                </div>
                <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: 'var(--radius-sm)', textAlign: 'center' }}>
-                 <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '0.25rem' }}>Fat</p>
-                 <h3 style={{ fontSize: '1.5rem', color: '#fb8500' }}>{fatConsumed}g</h3>
-                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>of {fatTarget}g</p>
+                 <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginBottom: '0.25rem' }}>Fat</p>
+                 <h3 style={{ fontSize: '1.25rem', color: '#fb8500' }}>{fatConsumed}g</h3>
+                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.7rem' }}>of {fatTarget}g</p>
                </div>
                <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: 'var(--radius-sm)', textAlign: 'center' }}>
-                 <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '0.25rem' }}>Fiber</p>
-                 <h3 style={{ fontSize: '1.5rem', color: '#8ecae6' }}>{fiberConsumed}g</h3>
-                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>of {fiberTarget}g</p>
+                 <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginBottom: '0.25rem' }}>Fiber</p>
+                 <h3 style={{ fontSize: '1.25rem', color: '#8ecae6' }}>{fiberConsumed}g</h3>
+                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.7rem' }}>of {fiberTarget}g</p>
                </div>
              </div>
           </div>
@@ -209,8 +209,8 @@ export default function Dashboard() {
                     )}
                     
                     <div style={{ flex: 1 }}>
-                      <h4 style={{ fontSize: '1.1rem', marginBottom: '0.25rem' }}>{meal.name}</h4>
-                      <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                      <h4 style={{ fontSize: '1.0rem', marginBottom: '0.25rem' }}>{meal.name}</h4>
+                      <p style={{ fontSize: '0.80rem', color: 'var(--text-secondary)' }}>
                         {meal.calories} kcal • {meal.protein}g P • {meal.carbs}g C • {meal.fat}g F • {meal.fiber || 0}g Fiber
                       </p>
                     </div>
