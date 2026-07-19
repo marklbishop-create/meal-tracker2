@@ -296,10 +296,10 @@ export default function History() {
                 <Line type="monotone" dataKey="fiber" name="Fiber (g)" stroke="#4caf50" strokeWidth={3} dot={{ r: 3 }} />
                 
                 {/* Goal Reference Lines */}
-                {profile?.protein && <ReferenceLine y={profile.protein} stroke="#ff9800" strokeDasharray="3 3" label={{ position: 'insideTopLeft', value: 'Protein Goal', fill: '#ff9800', fontSize: 10 }} />}
-                {profile?.carbs && <ReferenceLine y={profile.carbs} stroke="#2196f3" strokeDasharray="3 3" label={{ position: 'insideTopLeft', value: 'Carbs Goal', fill: '#2196f3', fontSize: 10 }} />}
-                {profile?.fat && <ReferenceLine y={profile.fat} stroke="#f44336" strokeDasharray="3 3" label={{ position: 'insideTopLeft', value: 'Fat Goal', fill: '#f44336', fontSize: 10 }} />}
-                {profile?.fiber && <ReferenceLine y={profile.fiber} stroke="#4caf50" strokeDasharray="3 3" label={{ position: 'insideBottomLeft', value: 'Fiber Goal', fill: '#4caf50', fontSize: 10 }} />}
+                {profile?.goals?.protein && <ReferenceLine y={profile.goals.protein} stroke="#ff9800" strokeDasharray="3 3" label={{ position: 'insideTopLeft', value: 'Protein Goal', fill: '#ff9800', fontSize: 10 }} />}
+                {profile?.goals?.carbs && <ReferenceLine y={profile.goals.carbs} stroke="#2196f3" strokeDasharray="3 3" label={{ position: 'insideTopLeft', value: 'Carbs Goal', fill: '#2196f3', fontSize: 10 }} />}
+                {profile?.goals?.fat && <ReferenceLine y={profile.goals.fat} stroke="#f44336" strokeDasharray="3 3" label={{ position: 'insideTopLeft', value: 'Fat Goal', fill: '#f44336', fontSize: 10 }} />}
+                {profile?.goals?.fiber && <ReferenceLine y={profile.goals.fiber} stroke="#4caf50" strokeDasharray="3 3" label={{ position: 'insideBottomLeft', value: 'Fiber Goal', fill: '#4caf50', fontSize: 10 }} />}
               </LineChart>
             </ResponsiveContainer>
           </div>
