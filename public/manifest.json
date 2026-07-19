@@ -1,0 +1,16 @@
+{
+  "name": "Meal Tracker",
+  "short_name": "Meals",
+  "description": "Track your meals and macros",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F1115",
+  "theme_color": "#0F1115",
+  "icons": [
+    {
+      "src": "/icon.jpg",
+      "sizes": "192x192 512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

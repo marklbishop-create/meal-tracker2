@@ -20,6 +20,10 @@ export const metadata: Metadata = {
   title: "Meal & Macro Tracker",
   description: "Track your meals, macros, and goals.",
   manifest: "/manifest.json",
+  icons: {
+    icon: '/icon.jpg',
+    apple: '/icon.jpg',
+  },
 };
 
 import { Analytics } from "@vercel/analytics/next";
