@@ -183,34 +183,6 @@ export default function Dashboard() {
           </div>
         </header>
 
-        {/* Weekly AI Review */}
-        <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '2rem', border: '1px solid var(--accent-primary)' }}>
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-            <div style={{ background: 'rgba(0, 102, 255, 0.1)', padding: '12px', borderRadius: '50%', color: 'var(--accent-primary)' }}>
-              <Sparkles size={24} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>Weekly AI Review</h3>
-              
-              {!aiReview && (
-                <>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '1rem' }}>
-                    Get a personalized analysis of your eating habits over the last 7 days.
-                  </p>
-                  <button onClick={handleGenerateReview} disabled={loadingAi} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
-                    {loadingAi ? "Generating..." : "Generate Review"}
-                  </button>
-                </>
-              )}
-              
-              {aiReview && (
-                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '8px', fontSize: '0.95rem', lineHeight: 1.6 }}>
-                  {aiReview}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
 
         {/* Main Content Area */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
@@ -257,6 +229,35 @@ export default function Dashboard() {
                </div>
              </div>
           </div>
+
+        {/* Weekly AI Review */}
+        <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '1.5rem', gridColumn: '1 / -1', border: '1px solid var(--accent-primary)' }}>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+            <div style={{ background: 'rgba(0, 102, 255, 0.1)', padding: '12px', borderRadius: '50%', color: 'var(--accent-primary)' }}>
+              <Sparkles size={24} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>Weekly AI Review</h3>
+              
+              {!aiReview && (
+                <>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '1rem' }}>
+                    Get a personalized analysis of your eating habits over the last 7 days.
+                  </p>
+                  <button onClick={handleGenerateReview} disabled={loadingAi} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
+                    {loadingAi ? "Generating..." : "Generate Review"}
+                  </button>
+                </>
+              )}
+              
+              {aiReview && (
+                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '8px', fontSize: '0.95rem', lineHeight: 1.6 }}>
+                  {aiReview}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
 
           {/* Meals List */}
           <div className="glass-panel" style={{ padding: '1.5rem', gridColumn: '1 / -1' }}>
