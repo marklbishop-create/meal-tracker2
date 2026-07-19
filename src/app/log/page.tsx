@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import BottomNav from "@/components/BottomNav";
 import { Camera, Check, Upload, X, Sparkles } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
