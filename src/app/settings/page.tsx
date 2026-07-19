@@ -119,16 +119,6 @@ export default function Settings() {
               </div>
             </div>
 
-            <h3 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '0.5rem', marginTop: '1rem' }}>Appearance</h3>
-            <div>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>App Theme</label>
-              <select className="input-field" value={theme} onChange={(e) => setTheme(e.target.value)}>
-                <option value="dark">Midnight Eclipse</option>
-                <option value="light">Crisp Horizon</option>
-                <option value="earthy">Terrane</option>
-              </select>
-            </div>
-
             <h3 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '1rem', marginTop: '1.5rem' }}>Preset Meals</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1rem' }}>
               {presets.map((p, i) => (
@@ -139,7 +129,22 @@ export default function Settings() {
                       {p.calories}kcal • {p.protein}g P • {p.carbs}g C • {p.fat}g F{p.fiber ? ` • ${p.fiber}g Fiber` : ''}
                     </div>
                   </div>
-                  <button type="button" onClick={() => setPresets(presets.filter((_, idx) => idx !== i))} style={{ color: 'var(--accent-danger)', background: 'transparent', border: 'none', cursor: 'pointer' }}>
+                  <button 
+                    type="button" 
+                    onClick={async () => {
+                      const newPresets = presets.filter((_, idx) => idx !== i);
+                      setPresets(newPresets);
+                      if (user) {
+                        try {
+                          await updateDoc(doc(db, "users", user.uid), { presets: newPresets });
+                          toast.success("Preset deleted");
+                        } catch (e) {
+                          toast.error("Failed to delete preset");
+                        }
+                      }
+                    }} 
+                    style={{ color: 'var(--accent-danger)', background: 'transparent', border: 'none', cursor: 'pointer' }}
+                  >
                     <Trash2 size={18} />
                   </button>
                 </div>
@@ -173,6 +178,16 @@ export default function Settings() {
                   <Plus size={18} /> Add Preset
                 </button>
               </div>
+            </div>
+
+            <h3 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '0.5rem', marginTop: '1.5rem' }}>Appearance</h3>
+            <div>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>App Theme</label>
+              <select className="input-field" value={theme} onChange={(e) => setTheme(e.target.value)}>
+                <option value="dark">Midnight Eclipse</option>
+                <option value="light">Crisp Horizon</option>
+                <option value="earthy">Terrane</option>
+              </select>
             </div>
 
             <button type="submit" disabled={loading} className="btn-primary" style={{ marginTop: '1.5rem', padding: '14px', fontSize: '1.1rem', width: '100%', justifyContent: 'center' }}>

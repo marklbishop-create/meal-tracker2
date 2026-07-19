@@ -4,10 +4,12 @@ import { useState, useRef } from "react";
 import BottomNav from "@/components/BottomNav";
 import { Camera, Check, Upload, X, Sparkles } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, query, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
+import { format } from "date-fns";
 
 export default function LogMeal() {
   const { user, profile } = useAuth();
@@ -19,6 +21,25 @@ export default function LogMeal() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   const [weightInput, setWeightInput] = useState("");
+  const [weightHistory, setWeightHistory] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!user) return;
+    const weightsRef = collection(db, "users", user.uid, "weights");
+    const qWeights = query(weightsRef, orderBy("createdAt", "asc"));
+    const unsubscribe = onSnapshot(qWeights, (snapshot) => {
+      const wData = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return { 
+          id: doc.id, 
+          weight: data.weight, 
+          date: data.createdAt ? format(data.createdAt.toDate(), 'MMM d') : '' 
+        };
+      });
+      setWeightHistory(wData);
+    });
+    return () => unsubscribe();
+  }, [user]);
 
   // Form State
   const [name, setName] = useState("");
@@ -93,7 +114,7 @@ export default function LogMeal() {
       });
       
       toast.success("Meal logged successfully!");
-      router.push('/history');
+      router.push('/');
     } catch (e) {
       console.error(e);
       toast.error("Failed to save meal.");
@@ -149,28 +170,7 @@ export default function LogMeal() {
           {/* Input Section */}
           <div style={{ marginBottom: '2rem' }}>
             
-            {profile?.presets && profile.presets.length > 0 && (
-              <div style={{ marginBottom: '1.5rem', padding: '1rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)' }}>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Use a Preset Meal</label>
-                <select className="input-field" onChange={(e) => {
-                  const p = profile.presets?.find(x => x.id === e.target.value);
-                  if (p) {
-                    setName(p.name);
-                    setDescription(p.description || "");
-                    setCalories(p.calories.toString());
-                    setProtein(p.protein.toString());
-                    setCarbs(p.carbs.toString());
-                    setFat(p.fat.toString());
-                    setFiber(p.fiber.toString());
-                  }
-                }}>
-                  <option value="">Select a preset...</option>
-                  {profile.presets.map(p => (
-                    <option key={p.id} value={p.id}>{p.name} ({p.calories}kcal)</option>
-                  ))}
-                </select>
-              </div>
-            )}
+
             
             <textarea 
                className="input-field" 
@@ -184,7 +184,6 @@ export default function LogMeal() {
             <input 
               type="file" 
               accept="image/*" 
-              capture="environment" 
               ref={fileInputRef} 
               style={{ display: 'none' }} 
               onChange={handlePhotoUpload}
@@ -225,6 +224,35 @@ export default function LogMeal() {
             </button>
           </div>
 
+          <div style={{ display: 'flex', alignItems: 'center', margin: '2rem 0', gap: '1rem' }}>
+             <div style={{ flex: 1, height: '1px', background: 'var(--border-color)' }} />
+             <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>OR</span>
+             <div style={{ flex: 1, height: '1px', background: 'var(--border-color)' }} />
+          </div>
+
+          {profile?.presets && profile.presets.length > 0 && (
+            <div style={{ marginBottom: '2rem', padding: '1.5rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Use a Preset Meal</label>
+              <select className="input-field" onChange={(e) => {
+                const p = profile?.presets?.find(x => x.id === e.target.value);
+                if (p) {
+                  setName(p.name);
+                  setDescription(p.description || "");
+                  setCalories(p.calories.toString());
+                  setProtein(p.protein.toString());
+                  setCarbs(p.carbs.toString());
+                  setFat(p.fat.toString());
+                  setFiber(p.fiber?.toString() || "");
+                }
+              }}>
+                <option value="">Select a preset...</option>
+                {profile.presets.map(p => (
+                  <option key={p.id} value={p.id}>{p.name} ({p.calories}kcal)</option>
+                ))}
+              </select>
+            </div>
+          )}
+          
           <div style={{ display: 'flex', alignItems: 'center', margin: '2rem 0', gap: '1rem' }}>
              <div style={{ flex: 1, height: '1px', background: 'var(--border-color)' }} />
              <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Estimated Results</span>
@@ -295,6 +323,28 @@ export default function LogMeal() {
                 </>
               )}
             </button>
+
+            {weightHistory.length > 0 && (
+              <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid var(--border-color)' }}>
+                <h4 style={{ color: 'var(--text-primary)', marginBottom: '1.5rem', fontSize: '1.1rem' }}>Weight Trends</h4>
+                <div style={{ height: 250, width: '100%' }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={weightHistory}>
+                      <XAxis dataKey="date" stroke="var(--text-muted)" fontSize={12} tickMargin={10} />
+                      <YAxis domain={['auto', 'auto']} stroke="var(--text-muted)" fontSize={12} width={40} />
+                      <Tooltip 
+                        contentStyle={{ background: 'var(--bg-secondary)', border: 'none', borderRadius: '8px', color: 'var(--text-primary)' }}
+                        itemStyle={{ color: 'var(--accent-primary)' }}
+                      />
+                      {profile?.goals?.weight && (
+                        <ReferenceLine y={profile.goals.weight} stroke="var(--accent-secondary)" strokeDasharray="3 3" label={{ position: 'top', value: 'Goal', fill: 'var(--text-muted)', fontSize: 12 }} />
+                      )}
+                      <Line type="monotone" dataKey="weight" stroke="var(--accent-primary)" strokeWidth={3} dot={{ r: 4, fill: 'var(--bg-primary)', strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

@@ -50,28 +50,34 @@
   --bg-secondary: #E8F1F5;
   --bg-glass: rgba(232, 241, 245, 0.8);
   --text-primary: #212529;
-  --text-secondary: rgba(33, 37, 41, 0.7);
-  --text-muted: rgba(33, 37, 41, 0.5);
-  --accent-primary: #4EA8DE;
-  --accent-secondary: #56CFE1;
-  --border-color: rgba(33, 37, 41, 0.1);
+  --text-secondary: rgba(33, 37, 41, 0.8);
+  --text-muted: rgba(33, 37, 41, 0.6);
+  --accent-primary: #0277BD;
+  --accent-secondary: #009688;
+  --border-color: rgba(33, 37, 41, 0.15);
   --glass-border: 1px solid rgba(255, 255, 255, 0.5);
-  --shadow-glow: 0 4px 15px rgba(78, 168, 222, 0.15);
+  --shadow-glow: 0 4px 15px rgba(2, 119, 189, 0.15);
+  
+  --grad-primary: linear-gradient(135deg, #0277BD 0%, #009688 100%);
+  --grad-secondary: linear-gradient(135deg, #6A1B9A 0%, #8E24AA 100%);
 }
 
 [data-theme="earthy"] {
   /* Terrane (Light & Earthy) */
   --bg-primary: #F7F5F0;
   --bg-secondary: #FFFFFF;
-  --bg-glass: rgba(255, 255, 255, 0.7);
-  --text-primary: #2A6F97; /* River Stone */
-  --text-secondary: rgba(42, 111, 151, 0.8);
-  --text-muted: rgba(42, 111, 151, 0.5);
-  --accent-primary: #D9743F; /* Burnt Ochre */
-  --accent-secondary: #606C38; /* Sagebrush */
-  --border-color: rgba(96, 108, 56, 0.15);
+  --bg-glass: rgba(255, 255, 255, 0.8);
+  --text-primary: #19382F; /* Deep Forest Green for high contrast */
+  --text-secondary: rgba(25, 56, 47, 0.85);
+  --text-muted: rgba(25, 56, 47, 0.6);
+  --accent-primary: #B25A24; /* Darker Burnt Ochre */
+  --accent-secondary: #4A5626; /* Darker Sagebrush */
+  --border-color: rgba(25, 56, 47, 0.15);
   --glass-border: 1px solid rgba(255, 255, 255, 0.6);
-  --shadow-glow: 0 4px 15px rgba(217, 116, 63, 0.15);
+  --shadow-glow: 0 4px 15px rgba(178, 90, 36, 0.15);
+
+  --grad-primary: linear-gradient(135deg, #B25A24 0%, #4A5626 100%);
+  --grad-secondary: linear-gradient(135deg, #5D4037 0%, #795548 100%);
 }
 
 html {

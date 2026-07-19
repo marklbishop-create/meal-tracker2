@@ -19,6 +19,7 @@ export default function History() {
   const [timeRange, setTimeRange] = useState<TimeRange>('1w');
   const [aiReview, setAiReview] = useState<string | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   // Interaction State
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -127,8 +128,12 @@ export default function History() {
 
   const handleDeleteMeal = async (mealId: string) => {
     if (!user) return;
-    if (confirm("Are you sure you want to delete this meal?")) {
+    try {
       await deleteDoc(doc(db, "users", user.uid, "meals", mealId));
+      toast.success("Meal deleted");
+      setConfirmDeleteId(null);
+    } catch(e) {
+      toast.error("Failed to delete meal");
     }
   };
 
@@ -145,78 +150,12 @@ export default function History() {
     }
   };
 
-  const handleGenerateReview = async () => {
-    setLoadingAi(true);
-    try {
-      const oneWeekAgo = subDays(new Date(), 7);
-      const recentMeals = meals.filter(m => m.date >= oneWeekAgo);
-      const recentWeights = weights.filter(w => w.date >= oneWeekAgo);
-      
-      const payload = recentMeals.map(m => ({
-        name: m.name,
-        calories: m.calories,
-        protein: m.protein,
-        date: format(m.date, 'yyyy-MM-dd')
-      }));
-
-      const res = await fetch('/api/ai-review', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          meals: payload, 
-          weights: recentWeights.map(w => w.weight),
-          goals: profile?.goals 
-        })
-      });
-      
-      if (!res.ok) {
-        toast.error("Failed to generate review.");
-        return;
-      }
-      
-      const data = await res.json();
-      setAiReview(data.review);
-    } catch (err) {
-      console.error(err);
-      toast.error("Error contacting AI.");
-    } finally {
-      setLoadingAi(false);
-    }
-  };
 
   return (
     <>
       <div className="container page-enter" style={{ paddingTop: '2rem', paddingBottom: '100px' }}>
         <h2 className="text-gradient" style={{ fontSize: '1.8rem', marginBottom: '1.5rem' }}>History & Trends</h2>
 
-        {/* Weekly AI Review */}
-        <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '1.5rem', border: '1px solid var(--accent-primary)' }}>
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-            <div style={{ background: 'rgba(0, 102, 255, 0.1)', padding: '12px', borderRadius: '50%', color: 'var(--accent-primary)' }}>
-              <Sparkles size={24} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>Weekly AI Review</h3>
-              
-              {!aiReview && (
-                <>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '1rem' }}>
-                    Get a personalized analysis of your eating habits over the last 7 days.
-                  </p>
-                  <button onClick={handleGenerateReview} disabled={loadingAi} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
-                    {loadingAi ? "Generating..." : "Generate Review"}
-                  </button>
-                </>
-              )}
-              
-              {aiReview && (
-                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '8px', fontSize: '0.95rem', lineHeight: 1.6 }}>
-                  {aiReview}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
 
         {/* Charts */}
         <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
@@ -429,9 +368,18 @@ export default function History() {
                         {meal.calories} kcal • {meal.protein}g P • {meal.carbs}g C • {meal.fat}g F
                       </p>
                     </div>
-                    <button onClick={() => handleDeleteMeal(meal.id)} style={{ background: 'transparent', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', padding: '8px' }}>
-                      <Trash2 size={20} />
-                    </button>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                    {confirmDeleteId === meal.id ? (
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button onClick={() => setConfirmDeleteId(null)} className="btn-secondary" style={{ padding: '6px 10px', fontSize: '0.8rem' }}>Cancel</button>
+                        <button onClick={() => handleDeleteMeal(meal.id)} className="btn-primary" style={{ padding: '6px 10px', fontSize: '0.8rem', background: 'var(--accent-danger)' }}>Delete</button>
+                      </div>
+                    ) : (
+                      <button onClick={() => setConfirmDeleteId(meal.id)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '8px' }}>
+                        <Trash2 size={18} />
+                      </button>
+                    )}
+                  </div>
                   </div>
                 ))}
               </div>

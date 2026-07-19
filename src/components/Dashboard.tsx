@@ -6,14 +6,18 @@ import BottomNav from "@/components/BottomNav";
 import Onboarding from "@/components/Onboarding";
 import { LogOut, Plus, Settings } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { collection, query, where, onSnapshot, orderBy } from "firebase/firestore";
+import { collection, query, where, onSnapshot, orderBy, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { Sparkles } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function Dashboard() {
   const { user, profile, logout } = useAuth();
   const router = useRouter();
   const [meals, setMeals] = useState<any[]>([]);
   const [streak, setStreak] = useState(0);
+  const [loadingAi, setLoadingAi] = useState(false);
+  const [aiReview, setAiReview] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -89,6 +93,52 @@ export default function Dashboard() {
     };
   }, [user]);
 
+  const handleGenerateReview = async () => {
+    if (!user) return;
+    setLoadingAi(true);
+    try {
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      
+      const mealsRef = collection(db, "users", user.uid, "meals");
+      const qMeals = query(mealsRef, where("createdAt", ">=", oneWeekAgo));
+      const mealsSnap = await getDocs(qMeals);
+      const payload = mealsSnap.docs.map(doc => {
+        const d = doc.data();
+        return { 
+          name: d.name, 
+          calories: d.calories, 
+          protein: d.protein, 
+          date: d.createdAt ? d.createdAt.toDate().toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+        };
+      });
+
+      const weightsRef = collection(db, "users", user.uid, "weights");
+      const qWeights = query(weightsRef, where("createdAt", ">=", oneWeekAgo));
+      const weightsSnap = await getDocs(qWeights);
+      const recentWeights = weightsSnap.docs.map(doc => doc.data().weight);
+
+      const res = await fetch('/api/ai-review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          meals: payload, 
+          weights: recentWeights,
+          goals: profile?.goals 
+        })
+      });
+      
+      if (!res.ok) throw new Error("Failed");
+      const data = await res.json();
+      setAiReview(data.review);
+    } catch (err) {
+      console.error(err);
+      toast.error("Error generating review.");
+    } finally {
+      setLoadingAi(false);
+    }
+  };
+
   if (!profile?.setupComplete) {
     return <Onboarding />;
   }
@@ -132,6 +182,35 @@ export default function Dashboard() {
             )}
           </div>
         </header>
+
+        {/* Weekly AI Review */}
+        <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '2rem', border: '1px solid var(--accent-primary)' }}>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+            <div style={{ background: 'rgba(0, 102, 255, 0.1)', padding: '12px', borderRadius: '50%', color: 'var(--accent-primary)' }}>
+              <Sparkles size={24} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>Weekly AI Review</h3>
+              
+              {!aiReview && (
+                <>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '1rem' }}>
+                    Get a personalized analysis of your eating habits over the last 7 days.
+                  </p>
+                  <button onClick={handleGenerateReview} disabled={loadingAi} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
+                    {loadingAi ? "Generating..." : "Generate Review"}
+                  </button>
+                </>
+              )}
+              
+              {aiReview && (
+                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '8px', fontSize: '0.95rem', lineHeight: 1.6 }}>
+                  {aiReview}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
 
         {/* Main Content Area */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
