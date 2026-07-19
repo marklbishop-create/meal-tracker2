@@ -60,7 +60,6 @@ export default function Settings() {
       });
       
       toast.success("Settings updated!");
-      router.push('/');
     } catch (error) {
       console.error("Error saving settings", error);
       toast.error("Failed to save settings. Please try again.");
