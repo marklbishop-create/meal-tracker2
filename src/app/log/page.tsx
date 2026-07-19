@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import BottomNav from "@/components/BottomNav";
-import { Camera, Check, Upload, X, Sparkles } from "lucide-react";
+import { Camera, Check, Upload, X, Sparkles, ImageIcon } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 import { collection, addDoc, serverTimestamp, query, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -15,6 +15,7 @@ export default function LogMeal() {
   const { user, profile } = useAuth();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'meal' | 'weight'>('meal');
@@ -86,6 +87,7 @@ export default function LogMeal() {
         setFat(data.fat?.toString() || "");
         setFiber(data.fiber?.toString() || "");
         setRationale(data.rationale || "");
+        toast.success("AI successfully estimated your meal!");
       } else {
         toast.error(data.error || "Could not analyze. You can still enter manually.");
       }
@@ -195,6 +197,14 @@ export default function LogMeal() {
               style={{ display: 'none' }} 
               onChange={handlePhotoUpload}
             />
+            <input 
+              type="file" 
+              accept="image/*" 
+              capture="environment"
+              ref={cameraInputRef} 
+              style={{ display: 'none' }} 
+              onChange={handlePhotoUpload}
+            />
             
             {photoPreview ? (
               <div style={{ position: 'relative', display: 'inline-block', width: '100%', marginBottom: '1rem' }}>
@@ -208,15 +218,26 @@ export default function LogMeal() {
                  </button>
               </div>
             ) : (
-              <button 
-                type="button" 
-                className="btn-secondary" 
-                onClick={() => fileInputRef.current?.click()}
-                style={{ width: '100%', padding: '16px', display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '1rem' }}
-              >
-                <Camera size={24} />
-                <span>Add a Photo (Optional)</span>
-              </button>
+              <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+                <button 
+                  type="button" 
+                  className="btn-secondary" 
+                  onClick={() => cameraInputRef.current?.click()}
+                  style={{ flex: 1, padding: '16px', display: 'flex', gap: '10px', justifyContent: 'center' }}
+                >
+                  <Camera size={20} />
+                  <span>Take Photo</span>
+                </button>
+                <button 
+                  type="button" 
+                  className="btn-secondary" 
+                  onClick={() => fileInputRef.current?.click()}
+                  style={{ flex: 1, padding: '16px', display: 'flex', gap: '10px', justifyContent: 'center' }}
+                >
+                  <ImageIcon size={20} />
+                  <span>Upload Photo</span>
+                </button>
+              </div>
             )}
             
             <button 
