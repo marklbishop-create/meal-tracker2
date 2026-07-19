@@ -148,8 +148,8 @@ export default function Dashboard() {
              
              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1.5rem', borderRadius: 'var(--radius-sm)', textAlign: 'center' }}>
-                 <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.5rem' }}>Calories Remaining</p>
-                 <h2 style={{ fontSize: '2.0rem', color: 'var(--accent-primary)' }}>{caloriesTarget - calsConsumed}</h2>
+                 <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.5rem' }}>Calories</p>
+                 <h2 style={{ fontSize: '2.0rem', color: 'var(--accent-primary)' }}>{calsConsumed}</h2>
                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>of {caloriesTarget} kcal</p>
                </div>
                
