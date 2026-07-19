@@ -284,6 +284,12 @@ export default function Dashboard() {
                       <p style={{ fontSize: '0.80rem', color: 'var(--text-secondary)' }}>
                         {meal.calories} kcal • {meal.protein}g P • {meal.carbs}g C • {meal.fat}g F • {meal.fiber || 0}g Fiber
                       </p>
+                      {meal.rationale && (
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontStyle: 'italic', marginTop: '0.25rem' }}>
+                          <Sparkles size={10} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'middle' }} />
+                          {meal.rationale}
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}

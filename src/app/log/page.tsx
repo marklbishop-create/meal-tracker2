@@ -48,6 +48,7 @@ export default function LogMeal() {
   const [carbs, setCarbs] = useState("");
   const [fat, setFat] = useState("");
   const [fiber, setFiber] = useState("");
+  const [rationale, setRationale] = useState("");
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -84,6 +85,7 @@ export default function LogMeal() {
         setCarbs(data.carbs?.toString() || "");
         setFat(data.fat?.toString() || "");
         setFiber(data.fiber?.toString() || "");
+        setRationale(data.rationale || "");
       } else {
         toast.error(data.error || "Could not analyze. You can still enter manually.");
       }
@@ -109,6 +111,7 @@ export default function LogMeal() {
         carbs: parseInt(carbs || "0"),
         fat: parseInt(fat || "0"),
         fiber: parseInt(fiber || "0"),
+        rationale: rationale,
         photoUrl: photoPreview, 
         createdAt: serverTimestamp()
       });
@@ -294,6 +297,15 @@ export default function LogMeal() {
                 <input type="number" required min="0" className="input-field" value={fiber} onChange={(e) => setFiber(e.target.value)} />
               </div>
             </div>
+
+            {rationale && (
+              <div style={{ marginTop: '0.5rem', padding: '1rem', background: 'rgba(0,0,0,0.15)', borderRadius: 'var(--radius-sm)' }}>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontStyle: 'italic', lineHeight: '1.4' }}>
+                  <Sparkles size={12} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'middle' }} />
+                  {rationale}
+                </p>
+              </div>
+            )}
 
             <button type="submit" disabled={loading} className="btn-primary" style={{ marginTop: '1rem', padding: '14px', fontSize: '1.1rem', justifyContent: 'center' }}>
               <Upload size={20} />

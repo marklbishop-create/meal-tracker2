@@ -367,6 +367,12 @@ export default function History() {
                       <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
                         {meal.calories} kcal • {meal.protein}g P • {meal.carbs}g C • {meal.fat}g F
                       </p>
+                      {meal.rationale && (
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontStyle: 'italic', marginTop: '0.35rem' }}>
+                          <Sparkles size={10} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'middle' }} />
+                          {meal.rationale}
+                        </p>
+                      )}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                     {confirmDeleteId === meal.id ? (

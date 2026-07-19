@@ -22,9 +22,10 @@ export async function POST(request: Request) {
         "protein": 0,
         "carbs": 0,
         "fat": 0,
-        "fiber": 0
+        "fiber": 0,
+        "rationale": "A short, one or two sentence explanation of how you estimated these macros."
       }
-      If you cannot identify food, return 0 for all numbers and "Unknown Food" for the name.
+      If you cannot identify food, return 0 for all numbers, "Unknown Food" for the name, and "Could not identify the food." for the rationale.
     `;
 
     const parts: any[] = [{ text: promptText }];
