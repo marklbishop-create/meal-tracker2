@@ -136,7 +136,9 @@ export default function Settings() {
                 <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'var(--bg-secondary)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
                   <div>
                     <div style={{ fontWeight: 600 }}>{p.name}</div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{p.calories}kcal • {p.protein}g P • {p.carbs}g C • {p.fat}g F</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                      {p.calories}kcal • {p.protein}g P • {p.carbs}g C • {p.fat}g F{p.fiber ? ` • ${p.fiber}g Fiber` : ''}
+                    </div>
                   </div>
                   <button type="button" onClick={() => setPresets(presets.filter((_, idx) => idx !== i))} style={{ color: 'var(--accent-danger)', background: 'transparent', border: 'none', cursor: 'pointer' }}>
                     <Trash2 size={18} />
@@ -153,6 +155,7 @@ export default function Settings() {
                   <input type="number" className="input-field" placeholder="Protein (g)" value={newPreset.protein} onChange={e => setNewPreset({...newPreset, protein: e.target.value})} />
                   <input type="number" className="input-field" placeholder="Carbs (g)" value={newPreset.carbs} onChange={e => setNewPreset({...newPreset, carbs: e.target.value})} />
                   <input type="number" className="input-field" placeholder="Fat (g)" value={newPreset.fat} onChange={e => setNewPreset({...newPreset, fat: e.target.value})} />
+                  <input type="number" className="input-field" placeholder="Fiber (g)" value={newPreset.fiber} onChange={e => setNewPreset({...newPreset, fiber: e.target.value})} style={{ gridColumn: 'span 2' }} />
                 </div>
                 <button type="button" className="btn-secondary" style={{ width: '100%', justifyContent: 'center' }} onClick={() => {
                   if (!newPreset.name || !newPreset.calories) return toast.error("Name and Calories required.");
