@@ -41,7 +41,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`, {
+    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -61,9 +61,16 @@ export async function POST(request: Request) {
     });
 
     if (!apiResponse.ok) {
-      const err = await apiResponse.text();
-      console.error("Gemini HTTP Error:", err);
-      throw new Error(`Gemini API returned ${apiResponse.status}`);
+      const errText = await apiResponse.text();
+      console.error("Gemini HTTP Error:", errText);
+      let errMsg = `Gemini API error (${apiResponse.status})`;
+      try {
+        const errJson = JSON.parse(errText);
+        if (errJson.error?.message) {
+          errMsg = errJson.error.message;
+        }
+      } catch {}
+      return NextResponse.json({ error: errMsg }, { status: apiResponse.status });
     }
 
     const data = await apiResponse.json();
@@ -78,15 +85,14 @@ export async function POST(request: Request) {
     try {
       resultJson = JSON.parse(textResult);
     } catch (e) {
-      // Fallback in case of weird formatting
       const cleanJson = textResult.replace(/```json/g, '').replace(/```/g, '').trim();
       resultJson = JSON.parse(cleanJson);
     }
 
     return NextResponse.json(resultJson);
 
-  } catch (error) {
-    console.error("Gemini API Error:", error);
-    return NextResponse.json({ error: 'Failed to analyze the meal. Please check your API key.' }, { status: 500 });
+  } catch (error: any) {
+    console.error("Gemini API Exception:", error);
+    return NextResponse.json({ error: error.message || 'Failed to analyze the meal.' }, { status: 500 });
   }
 }

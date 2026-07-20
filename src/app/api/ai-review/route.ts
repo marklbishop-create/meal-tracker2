@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       CRITICAL FORMATTING RULE: Do NOT use any Markdown headers (#, ##, ###) or bullet points. Keep the response entirely as plain text paragraphs separated by basic line breaks. You may use **bolding** sparingly for key terms.
     `;
 
-    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`, {
+    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
