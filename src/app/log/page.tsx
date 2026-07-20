@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import BottomNav from "@/components/BottomNav";
 import { Camera, Check, Upload, X, Sparkles, ImageIcon } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
-import { collection, addDoc, serverTimestamp, query, orderBy, onSnapshot } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -22,6 +22,7 @@ export default function LogMeal() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   const [weightInput, setWeightInput] = useState("");
+  const [weightDate, setWeightDate] = useState(() => format(new Date(), 'yyyy-MM-dd'));
   const [weightHistory, setWeightHistory] = useState<any[]>([]);
 
   useEffect(() => {
@@ -171,9 +172,10 @@ export default function LogMeal() {
     if (!user || !weightInput) return;
     setLoading(true);
     try {
+      const selectedDate = weightDate ? new Date(weightDate + 'T12:00:00') : new Date();
       await addDoc(collection(db, "users", user.uid, "weights"), {
         weight: parseFloat(weightInput),
-        createdAt: serverTimestamp()
+        createdAt: Timestamp.fromDate(selectedDate)
       });
       toast.success("Weight logged successfully!");
       router.push('/history');
@@ -376,7 +378,19 @@ export default function LogMeal() {
         </div>
         ) : (
           <div className="glass-panel" style={{ padding: '2rem', maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
-            <h3 style={{ marginBottom: '1.5rem', fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Enter Today's Weight</h3>
+            <h3 style={{ marginBottom: '1.5rem', fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Log Weight</h3>
+            
+            <div style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.35rem' }}>
+              <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Date</label>
+              <input
+                type="date"
+                className="input-field"
+                value={weightDate}
+                onChange={(e) => setWeightDate(e.target.value)}
+                style={{ width: '180px', textAlign: 'center', padding: '8px 12px' }}
+              />
+            </div>
+
             <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', justifyContent: 'center', alignItems: 'center' }}>
               <input
                 type="number"
