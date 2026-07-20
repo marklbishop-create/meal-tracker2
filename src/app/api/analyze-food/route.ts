@@ -8,7 +8,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Please provide a photo or a description.' }, { status: 400 });
     }
 
-    const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
     if (!apiKey) {
       return NextResponse.json({ error: 'Gemini API key is not configured.' }, { status: 500 });
     }
@@ -62,7 +62,8 @@ export async function POST(request: Request) {
 
     if (!apiResponse.ok) {
       const errText = await apiResponse.text();
-      console.error("Gemini HTTP Error:", errText);
+      const keyPrefix = apiKey ? `${apiKey.substring(0, 6)}...` : 'MISSING';
+      console.error(`Gemini HTTP Error (key: ${keyPrefix}):`, errText);
       let errMsg = `Gemini API error (${apiResponse.status})`;
       try {
         const errJson = JSON.parse(errText);

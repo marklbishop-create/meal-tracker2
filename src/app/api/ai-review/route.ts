@@ -8,7 +8,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ review: 'You have not logged any meals in the last 7 days. Start logging to get your weekly insights!' });
     }
 
-    const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
     if (!apiKey) {
       return NextResponse.json({ error: 'Gemini API key is not configured.' }, { status: 500 });
     }
