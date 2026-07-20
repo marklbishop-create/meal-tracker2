@@ -41,7 +41,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -88,6 +88,14 @@ export async function POST(request: Request) {
     } catch (e) {
       const cleanJson = textResult.replace(/```json/g, '').replace(/```/g, '').trim();
       resultJson = JSON.parse(cleanJson);
+    }
+
+    if (resultJson) {
+      resultJson.calories = parseInt(String(resultJson.calories || 0));
+      resultJson.protein = parseInt(String(resultJson.protein || 0));
+      resultJson.carbs = parseInt(String(resultJson.carbs || 0));
+      resultJson.fat = parseInt(String(resultJson.fat || 0));
+      resultJson.fiber = parseInt(String(resultJson.fiber || 0));
     }
 
     return NextResponse.json(resultJson);
