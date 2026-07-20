@@ -42,7 +42,10 @@ export async function POST(request: Request) {
             role: 'user',
             parts: [{ text: promptText }]
           }
-        ]
+        ],
+        generationConfig: {
+          maxOutputTokens: 500
+        }
       })
     });
 

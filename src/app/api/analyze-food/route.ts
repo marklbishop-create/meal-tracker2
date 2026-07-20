@@ -54,7 +54,8 @@ export async function POST(request: Request) {
           }
         ],
         generationConfig: {
-          responseMimeType: "application/json"
+          responseMimeType: "application/json",
+          maxOutputTokens: 300
         }
       })
     });

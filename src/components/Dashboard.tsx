@@ -231,32 +231,38 @@ export default function Dashboard() {
           </div>
 
         {/* Weekly AI Review */}
-        <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '1.5rem', gridColumn: '1 / -1', border: '1px solid var(--accent-primary)' }}>
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-            <div style={{ background: 'rgba(0, 102, 255, 0.1)', padding: '12px', borderRadius: '50%', color: 'var(--accent-primary)' }}>
-              <Sparkles size={24} />
+        <div style={{ marginBottom: '1.5rem', gridColumn: '1 / -1' }}>
+          {!aiReview ? (
+            <button 
+              onClick={handleGenerateReview} 
+              disabled={loadingAi} 
+              className="btn-ai" 
+              style={{ width: '100%', padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', fontSize: '1rem' }}
+            >
+              <Sparkles size={20} />
+              <span>{loadingAi ? "Generating Weekly AI Review..." : "Generate Weekly AI Review"}</span>
+            </button>
+          ) : (
+            <div className="glass-panel" style={{ padding: '1.25rem', border: '1px solid var(--accent-primary)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                <h3 style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Sparkles size={18} color="var(--accent-primary)" />
+                  Weekly AI Review
+                </h3>
+                <button 
+                  onClick={handleGenerateReview} 
+                  disabled={loadingAi} 
+                  className="btn-secondary" 
+                  style={{ padding: '6px 12px', fontSize: '0.8rem' }}
+                >
+                  {loadingAi ? "Refreshing..." : "Refresh"}
+                </button>
+              </div>
+              <div style={{ background: 'rgba(0,0,0,0.15)', padding: '1rem', borderRadius: 'var(--radius-sm)', fontSize: '0.9rem', lineHeight: 1.6, color: 'var(--text-primary)' }}>
+                {aiReview}
+              </div>
             </div>
-            <div style={{ flex: 1 }}>
-              <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>Weekly AI Review</h3>
-              
-              {!aiReview && (
-                <>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '1rem' }}>
-                    Get a personalized analysis of your eating habits over the last 7 days.
-                  </p>
-                  <button onClick={handleGenerateReview} disabled={loadingAi} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
-                    {loadingAi ? "Generating..." : "Generate Review"}
-                  </button>
-                </>
-              )}
-              
-              {aiReview && (
-                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '8px', fontSize: '0.95rem', lineHeight: 1.6 }}>
-                  {aiReview}
-                </div>
-              )}
-            </div>
-          </div>
+          )}
         </div>
 
           {/* Meals List */}

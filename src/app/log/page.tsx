@@ -51,16 +51,55 @@ export default function LogMeal() {
   const [fiber, setFiber] = useState("");
   const [rationale, setRationale] = useState("");
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = document.createElement("img");
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const MAX_DIM = 800;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_DIM) {
+              height = Math.round((height * MAX_DIM) / width);
+              width = MAX_DIM;
+            }
+          } else {
+            if (height > MAX_DIM) {
+              width = Math.round((width * MAX_DIM) / height);
+              height = MAX_DIM;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL("image/jpeg", 0.8));
+        };
+        img.src = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64String = event.target?.result as string;
-      setPhotoPreview(base64String);
-    };
-    reader.readAsDataURL(file);
+    try {
+      const compressedBase64 = await compressImage(file);
+      setPhotoPreview(compressedBase64);
+    } catch {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setPhotoPreview(event.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleAnalyze = async () => {
@@ -252,16 +291,16 @@ export default function LogMeal() {
             </button>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', margin: '2rem 0', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', margin: '1rem 0', gap: '1rem' }}>
              <div style={{ flex: 1, height: '1px', background: 'var(--border-color)' }} />
-             <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>OR</span>
+             <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>OR</span>
              <div style={{ flex: 1, height: '1px', background: 'var(--border-color)' }} />
           </div>
 
           {profile?.presets && profile.presets.length > 0 && (
-            <div style={{ marginBottom: '2rem', padding: '1.5rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Use a Preset Meal</label>
-              <select className="input-field" onChange={(e) => {
+            <div style={{ marginBottom: '1rem', padding: '0.85rem 1rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
+              <label style={{ display: 'block', marginBottom: '0.35rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Use a Preset Meal</label>
+              <select className="input-field" style={{ padding: '10px 12px' }} onChange={(e) => {
                 const p = profile?.presets?.find(x => x.id === e.target.value);
                 if (p) {
                   setName(p.name);
@@ -281,9 +320,9 @@ export default function LogMeal() {
             </div>
           )}
           
-          <div style={{ display: 'flex', alignItems: 'center', margin: '2rem 0', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', margin: '1rem 0', gap: '1rem' }}>
              <div style={{ flex: 1, height: '1px', background: 'var(--border-color)' }} />
-             <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Estimated Results</span>
+             <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Estimated Results</span>
              <div style={{ flex: 1, height: '1px', background: 'var(--border-color)' }} />
           </div>
 
