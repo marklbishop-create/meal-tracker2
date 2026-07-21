@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/AuthContext";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, collection, writeBatch, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import BottomNav from "@/components/BottomNav";
-import { Check, ArrowLeft, Plus, Trash2, LogOut } from "lucide-react";
+import { Check, ArrowLeft, Plus, Trash2, LogOut, FileText } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { signOut } from "firebase/auth";
@@ -27,6 +27,9 @@ export default function Settings() {
 
   const [presets, setPresets] = useState<any[]>([]);
   const [newPreset, setNewPreset] = useState({ name: "", description: "", calories: "", protein: "", carbs: "", fat: "", fiber: "" });
+
+  const csvInputRef = useRef<HTMLInputElement>(null);
+  const [importingCsv, setImportingCsv] = useState(false);
 
   useEffect(() => {
     if (profile) {
@@ -188,6 +191,137 @@ export default function Settings() {
                 <option value="light">Crisp Horizon</option>
                 <option value="earthy">Terrane</option>
               </select>
+            </div>
+
+            <h3 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '0.5rem', marginTop: '1.5rem' }}>Import Historical Data</h3>
+            <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.75rem', lineHeight: '1.4' }}>
+                Upload a CSV file of your historical meal logs (Calories, Protein, Carbs, Fats, AI Breakdown, Timestamp).
+              </p>
+              <input 
+                type="file" 
+                accept=".csv,.tsv,.txt" 
+                ref={csvInputRef} 
+                style={{ display: 'none' }} 
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file || !user) return;
+
+                  setImportingCsv(true);
+                  const toastId = toast.loading("Parsing CSV data...");
+
+                  try {
+                    const text = await file.text();
+                    
+                    // Simple CSV/TSV parser supporting quoted fields
+                    const parseCSV = (str: string) => {
+                      const lines: string[][] = [];
+                      let currentRow: string[] = [];
+                      let currentVal = '';
+                      let inQuotes = false;
+                      const delimiter = str.includes('\t') && (!str.includes(',') || str.indexOf('\t') < str.indexOf(',')) ? '\t' : ',';
+
+                      for (let i = 0; i < str.length; i++) {
+                        const char = str[i];
+                        const nextChar = str[i + 1];
+
+                        if (char === '"') {
+                          if (inQuotes && nextChar === '"') {
+                            currentVal += '"';
+                            i++;
+                          } else {
+                            inQuotes = !inQuotes;
+                          }
+                        } else if (char === delimiter && !inQuotes) {
+                          currentRow.push(currentVal.trim());
+                          currentVal = '';
+                        } else if ((char === '\r' || char === '\n') && !inQuotes) {
+                          if (char === '\r' && nextChar === '\n') i++;
+                          currentRow.push(currentVal.trim());
+                          if (currentRow.some(cell => cell.length > 0)) lines.push(currentRow);
+                          currentRow = [];
+                          currentVal = '';
+                        } else {
+                          currentVal += char;
+                        }
+                      }
+                      if (currentVal || currentRow.length > 0) {
+                        currentRow.push(currentVal.trim());
+                        if (currentRow.some(cell => cell.length > 0)) lines.push(currentRow);
+                      }
+                      if (lines.length < 2) return [];
+
+                      const headers = lines[0].map(h => h.toLowerCase().trim());
+                      return lines.slice(1).map(row => {
+                        const obj: Record<string, string> = {};
+                        headers.forEach((h, idx) => { obj[h] = row[idx] || ''; });
+                        return obj;
+                      });
+                    };
+
+                    const rows = parseCSV(text);
+
+                    if (rows.length === 0) {
+                      toast.error("No valid meal rows found in CSV.", { id: toastId });
+                      setImportingCsv(false);
+                      return;
+                    }
+
+                    toast.loading(`Importing ${rows.length} historical meals...`, { id: toastId });
+
+                    const mealsRef = collection(db, "users", user.uid, "meals");
+                    const BATCH_SIZE = 400;
+                    let importedCount = 0;
+
+                    for (let i = 0; i < rows.length; i += BATCH_SIZE) {
+                      const chunk = rows.slice(i, i + BATCH_SIZE);
+                      const batch = writeBatch(db);
+
+                      chunk.forEach(row => {
+                        const rawTime = row['timestamp'] || row['date'] || row['time'] || row['createdat'];
+                        const parsedDate = rawTime ? new Date(rawTime) : new Date();
+                        const validDate = !isNaN(parsedDate.getTime()) ? parsedDate : new Date();
+
+                        const foodName = row['what did you eat?'] || row['what did you eat'] || row['name'] || row['meal'] || row['meal type'] || 'Imported Meal';
+                        const mealType = row['meal type'] && row['meal type'] !== foodName ? ` (${row['meal type']})` : '';
+
+                        const newDocRef = doc(mealsRef);
+                        batch.set(newDocRef, {
+                          name: `${foodName}${mealType}`.trim(),
+                          calories: parseInt(row['calories'] || '0') || 0,
+                          protein: parseInt(row['protien'] || row['protein'] || '0') || 0,
+                          carbs: parseInt(row['carbs'] || row['carbohydrates'] || '0') || 0,
+                          fat: parseInt(row['fats'] || row['fat'] || '0') || 0,
+                          fiber: parseInt(row['fiber'] || '0') || 0,
+                          rationale: row['ai breakdown'] || row['rationale'] || row['notes'] || '',
+                          createdAt: Timestamp.fromDate(validDate)
+                        });
+                      });
+
+                      await batch.commit();
+                      importedCount += chunk.length;
+                    }
+
+                    toast.success(`Successfully imported ${importedCount} meals!`, { id: toastId });
+                    if (csvInputRef.current) csvInputRef.current.value = "";
+                  } catch (err: any) {
+                    console.error("CSV Import Error:", err);
+                    toast.error("Failed to import CSV data.", { id: toastId });
+                  } finally {
+                    setImportingCsv(false);
+                  }
+                }} 
+              />
+              <button 
+                type="button" 
+                disabled={importingCsv} 
+                className="btn-secondary" 
+                style={{ width: '100%', justifyContent: 'center', gap: '8px' }} 
+                onClick={() => csvInputRef.current?.click()}
+              >
+                <FileText size={18} />
+                <span>{importingCsv ? "Importing Data..." : "Upload Historical CSV"}</span>
+              </button>
             </div>
 
             <button type="submit" disabled={loading} className="btn-primary" style={{ marginTop: '1.5rem', padding: '14px', fontSize: '1.1rem', width: '100%', justifyContent: 'center' }}>
